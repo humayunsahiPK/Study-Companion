@@ -1,3 +1,7 @@
+main {
+  height: 100vh;
+  overflow-y: auto;
+}
 .sidebar {
   font-family: sans-serif;
   width: 220px;
@@ -70,4 +74,52 @@
 }
 .sidebar a.active {
   color: whitesmoke;
+}
+
+@media (max-width: 880px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    padding: 10px 20px;
+  }
+  .logo {
+    width: 44px;
+    height: 44px;
+    padding-top: 0;
+  }
+  .sidebar ul {
+    flex-direction: row;
+    gap: 18px;
+    padding-right: 0;
+    font-size: 12px;
+  }
+  .sidebar > :nth-child(3) {
+    margin-top: 0;
+  }
+  .sidebar li {
+    padding: 6px 0;
+  }
+  .sidebarfooter {
+    display: none;
+  }
+  .sidebar a.active::before {
+    left: 50%;
+    top: auto;
+    bottom: -6px;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar ul {
+    gap: 10px;
+    font-size: 11px;
+  }
+  .sidebar {
+    padding: 8px 12px;
+  }
 }

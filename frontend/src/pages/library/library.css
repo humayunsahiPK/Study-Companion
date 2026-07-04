@@ -26,6 +26,8 @@ main {
   flex: 1;
   min-width: 0;
   margin: 0 auto;
+  height: 100vh;
+  overflow-y: auto;
 }
 .page-head {
   display: flex;
@@ -46,6 +48,10 @@ h1 {
   font-weight: 600;
   font-size: 32px;
   letter-spacing: -0.01em;
+}
+.lib-table-wrap {
+  width: 100%;
+  overflow-x: auto;
 }
 .lib-table {
   width: 100%;
@@ -110,4 +116,27 @@ h1 {
   padding: 2px 8px;
   border-radius: 20px;
   font-weight: 500;
+}
+
+@media (max-width: 880px) {
+  main {
+    padding: 24px;
+  }
+  .lib-table {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 16px;
+  }
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .btn-ghost {
+    width: 100%;
+  }
 }

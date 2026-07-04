@@ -1,9 +1,12 @@
 import "./dashboard.css";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
 function Dashboard() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [noteText, setNoteText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function handleUploadClick() {
     fileInputRef.current?.click();
@@ -16,6 +19,20 @@ function Dashboard() {
       console.log("Selected file:", file.name);
     }
   }
+
+  function handleNoteChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setNoteText(e.target.value);
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }
+
+  function handleNoteSubmit() {
+    console.log("Submitted notes:", noteText);
+  }
+
   const navigate = useNavigate();
   return (
     <main className="dashboard">
@@ -137,6 +154,24 @@ function Dashboard() {
           onChange={handleFileChange}
           style={{ display: "none" }}
         />
+      </div>
+
+      <div className="note-cta">
+        <div className="section-label">Or paste notes</div>
+        <textarea
+          ref={textareaRef}
+          className="note-textarea"
+          placeholder="Paste your raw lecture notes here..."
+          value={noteText}
+          onChange={handleNoteChange}
+          rows={1}
+        />
+        <button
+          className="btn btn-ghost note-submit-btn"
+          onClick={handleNoteSubmit}
+        >
+          Generate cards from notes
+        </button>
       </div>
     </main>
   );

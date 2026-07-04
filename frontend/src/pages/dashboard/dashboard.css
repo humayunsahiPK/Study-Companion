@@ -4,6 +4,8 @@ main {
   padding-bottom: 56px;
   padding-left: 56px;
   display: block;
+  height: 100vh;
+  overflow-y: auto;
 }
 * {
   margin: 0;
@@ -278,4 +280,91 @@ body {
 .btn-ghost:hover {
   border-color: rgba(255, 255, 255, 0.3);
   color: #ffffff;
+}
+
+.note-cta {
+  border: 1px dashed #a4b1cc;
+  border-radius: 6px;
+  padding: 26px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.note-textarea {
+  width: 100%;
+  min-height: 44px;
+  max-height: 320px;
+  resize: none;
+  overflow-y: auto;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #eceef3;
+  background: #1a2029;
+  border: 1px solid #2a3242;
+  border-radius: 4px;
+  padding: 12px 14px;
+  transition: border-color 0.15s ease;
+}
+.note-textarea::placeholder {
+  color: #7d859c;
+}
+.note-textarea:focus {
+  outline: none;
+  border-color: #f0c33c;
+}
+.note-submit-btn {
+  align-self: flex-end;
+}
+
+@media (max-width: 880px) {
+  main {
+    padding: 24px;
+  }
+  .dashgrid {
+    grid-template-columns: 1fr;
+  }
+  .card-row {
+    grid-template-columns: 1fr;
+  }
+  .due-copy {
+    max-width: none;
+  }
+  .Greetings {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 16px;
+  }
+  .Container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .ReviewBtn {
+    width: 100%;
+  }
+  .dotgrid {
+    gap: 4px;
+  }
+  .due-number {
+    font-size: 44px;
+  }
+  .due-copy {
+    font-size: 16px;
+  }
+  .drop-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-ghost {
+    width: 100%;
+  }
+  .note-submit-btn {
+    align-self: stretch;
+  }
 }

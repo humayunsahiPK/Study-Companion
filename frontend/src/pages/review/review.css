@@ -1,3 +1,7 @@
+main {
+  height: 100vh;
+  overflow-y: auto;
+}
 .review {
   flex: 1;
   min-width: 0;
@@ -157,4 +161,170 @@ body {
 .rate-easy:hover {
   border-color: #f0c33c;
   color: #f0c33c;
+}
+
+.mode-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+.mode-btn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7d859c;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mode-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #eceef3;
+}
+.mode-btn.active {
+  background: #f0c33c;
+  border-color: #f0c33c;
+  color: #1a1608;
+}
+.mcq-next-btn {
+  margin-top: -8px;
+}
+.mcq-next-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.review-empty {
+  color: #7d859c;
+  font-size: 14px;
+  padding: 60px 0;
+}
+
+.mcq-card {
+  width: 460px;
+  max-width: 100%;
+  background: #f3ecda;
+  color: #262115;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 36px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.mcq-question {
+  font-family: "Spectral", serif;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+}
+.mcq-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mcq-option {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262115;
+  background: #e7ddc4;
+  border: 1px solid rgba(38, 33, 21, 0.15);
+  border-radius: 3px;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mcq-option:hover {
+  transform: translateY(-2px);
+  border-color: rgba(38, 33, 21, 0.35);
+}
+.mcq-correct {
+  background: rgba(111, 220, 176, 0.35);
+  border-color: #6fdcb0;
+  color: #0d3d2c;
+}
+.mcq-incorrect {
+  background: rgba(232, 120, 92, 0.3);
+  border-color: #e8785c;
+  color: #7a2e1c;
+}
+
+@media (max-width: 880px) {
+  .review {
+    padding: 24px;
+  }
+  .flip-card {
+    height: 220px;
+  }
+  .flip-text {
+    font-size: 18px;
+  }
+  .flip-face {
+    padding: 24px;
+  }
+  .mcq-card {
+    padding: 24px;
+  }
+  .mcq-question {
+    font-size: 18px;
+  }
+  .mode-row {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .btnrev {
+    width: 100%;
+  }
+  .flip-card {
+    height: 200px;
+    margin-bottom: 20px;
+  }
+  .flip-text {
+    font-size: 16px;
+  }
+  .rate-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .rate-btn {
+    min-width: 42%;
+    padding: 10px 14px;
+  }
+  .review-source {
+    text-align: center;
+    padding: 0 16px;
+  }
+  .mcq-card {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  .mcq-question {
+    font-size: 16px;
+  }
+  .mcq-option {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+  .mode-row {
+    width: 100%;
+  }
+  .mode-btn {
+    flex: 1;
+  }
 }
