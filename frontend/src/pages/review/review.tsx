@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./review.css";
+import { apiRequest } from "../../api/client";
 
 type FlipCard = {
+  id: string;
   type: "flip";
   front: string;
   back: string;
 };
 
 type McqCard = {
+  id: string;
   type: "mcq";
   question: string;
   options: string[];
@@ -17,42 +20,45 @@ type McqCard = {
 
 type Card = FlipCard | McqCard;
 
-const cards: Card[] = [
-  {
-    type: "flip",
-    front: "Locke's argument for private property rests on what act?",
-    back: "Mixing one's labor with an unowned natural resource...",
-  },
-  {
-    type: "mcq",
-    question: "Which gas is released during the Krebs cycle?",
-    options: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"],
-    correctIndex: 1,
-  },
-  { type: "flip", front: "Your third question", back: "Your third answer" },
-  {
-    type: "mcq",
-    question: "Locke's labor theory justifies ownership through what?",
-    options: [
-      "Government decree",
-      "Mixing labor with unowned resources",
-      "Inheritance rights",
-      "Social contract voting",
-    ],
-    correctIndex: 1,
-  },
-];
-
 function Review() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const lectureId = (location.state as { lectureId?: string } | null)
+    ?.lectureId;
+
+  const [cards, setCards] = useState<Card[]>([]);
+  const [isLoading, setIsLoading] = useState(Boolean(lectureId));
+  const [error, setError] = useState<string | null>(null);
+
   const [mode, setMode] = useState<"flashcards" | "mcq">("flashcards");
   const [flipped, setFlipped] = useState(false);
   const [current, setCurrent] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!lectureId) return;
+
+    async function loadCards() {
+      try {
+        const data = await apiRequest<{ cards: Card[] }>(
+          `/lectures/${lectureId}/cards`,
+        );
+        setCards(data.cards);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load cards.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadCards();
+  }, [lectureId]);
+
   const filteredCards =
-    mode === "mcq" ? cards.filter((c) => c.type === "mcq") : cards;
+    mode === "mcq"
+      ? cards.filter((c) => c.type === "mcq")
+      : cards.filter((c) => c.type === "flip");
 
   const card = filteredCards[current];
 
@@ -78,14 +84,68 @@ function Review() {
     }
   }
 
+  async function submitReview(cardId: string, rating: string) {
+    try {
+      await apiRequest(`/lectures/cards/${cardId}/review`, {
+        method: "POST",
+        body: { rating },
+      });
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+    }
+  }
+
   function rate(type: string) {
-    console.log("Rated:", type);
+    if (card) submitReview(card.id, type);
     goToNext();
   }
 
   function selectOption(index: number) {
-    if (selectedOption !== null) return;
+    if (selectedOption !== null || card.type !== "mcq") return;
     setSelectedOption(index);
+  }
+
+  function handleMcqNext() {
+    if (card && card.type === "mcq" && selectedOption !== null) {
+      const isCorrect = selectedOption === card.correctIndex;
+      submitReview(card.id, isCorrect ? "good" : "forgot");
+    }
+    goToNext();
+  }
+
+  if (isLoading) {
+    return (
+      <main className="review">
+        <p className="review-empty">Loading cards...</p>
+      </main>
+    );
+  }
+
+  if (!lectureId) {
+    return (
+      <main className="review">
+        <div className="page-head">
+          <div>
+            <div className="eyebrow">Review session</div>
+            <h1>No lecture selected.</h1>
+          </div>
+          <button className="btnrev btn-ghostrev" onClick={exitSession}>
+            Exit session
+          </button>
+        </div>
+        <p className="review-empty">
+          Pick a lecture from the Library and click "Start review" to begin.
+        </p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="review">
+        <p className="review-empty">{error}</p>
+      </main>
+    );
   }
 
   return (
@@ -118,7 +178,7 @@ function Review() {
 
       <div className="review-shell">
         {filteredCards.length === 0 ? (
-          <p className="review-empty">No MCQs available yet.</p>
+          <p className="review-empty">No cards of this type yet.</p>
         ) : isComplete ? (
           <div
             className="review-complete"
@@ -174,7 +234,7 @@ function Review() {
 
                 <button
                   className="btnrev btn-ghostrev mcq-next-btn"
-                  onClick={goToNext}
+                  onClick={handleMcqNext}
                   disabled={selectedOption === null}
                 >
                   Next
@@ -234,11 +294,6 @@ function Review() {
                 </div>
               </>
             )}
-
-            <div className="review-source">
-              from <b>POL SCI 110 — History of Political Thought</b>, recorded
-              Jun 29
-            </div>
           </>
         )}
       </div>

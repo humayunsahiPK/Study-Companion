@@ -1,0 +1,107 @@
+.login {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #12161f, #212632);
+  font-family: "Inter", sans-serif;
+}
+.login-card {
+  width: 400px;
+  max-width: 90%;
+  background: #f3ecda;
+  color: #262115;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.login .eyebrow {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: #6b5f3f;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.login h1 {
+  font-family: "Spectral", serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 4px 0 6px;
+}
+.login-subtext {
+  font-size: 13px;
+  color: #6b5f3f;
+  margin-bottom: 22px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.login-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b5f3f;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.login-input {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #262115;
+  background: #e7ddc4;
+  border: 1px solid rgba(38, 33, 21, 0.15);
+  border-radius: 3px;
+  padding: 10px 12px;
+  transition: border-color 0.15s ease;
+}
+.login-input::placeholder {
+  color: #8a7d55;
+}
+.login-input:focus {
+  outline: none;
+  border-color: #f0c33c;
+}
+.login-submit-btn {
+  background: #f0c33c;
+  margin-top: 4px;
+  width: 100%;
+}
+.login-submit-btn:hover {
+  opacity: 0.9;
+}
+.login .btn-ghostrev {
+  align-self: center;
+  color: #6b5f3f;
+  border: none;
+  background: transparent;
+}
+.login .btn-ghostrev:hover {
+  color: #262115;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 28px;
+  }
+  .login h1 {
+    font-size: 24px;
+  }
+}
+
+.login-error {
+  color: #b5473f;
+  font-size: 13px;
+  margin-top: -4px;
+}

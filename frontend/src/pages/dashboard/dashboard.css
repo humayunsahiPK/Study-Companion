@@ -44,6 +44,11 @@ body {
   align-items: center;
   width: 100%;
 }
+.pagehead-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .ReviewBtn {
   padding-top: 20px;
   color: #1a1608;
@@ -345,6 +350,12 @@ body {
     align-items: flex-start;
     gap: 12px;
   }
+  .pagehead-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
   .ReviewBtn {
     width: 100%;
   }
@@ -367,4 +378,14 @@ body {
   .note-submit-btn {
     align-self: stretch;
   }
+}
+
+.dashboard-status {
+  color: #c7cbd8;
+  font-size: 14px;
+  padding: 60px 0;
+  text-align: center;
+}
+.dashboard-error {
+  color: #e8785c;
 }

@@ -26,8 +26,6 @@ main {
   flex: 1;
   min-width: 0;
   margin: 0 auto;
-  height: 100vh;
-  overflow-y: auto;
 }
 .page-head {
   display: flex;
@@ -75,6 +73,9 @@ h1 {
 .lib-table tbody tr:hover {
   background: var(--surface);
 }
+.lib-table tbody tr.lib-row-active {
+  background: var(--surface-raised);
+}
 .lib-table td {
   padding: 16px 0;
   font-size: 14px;
@@ -118,12 +119,40 @@ h1 {
   font-weight: 500;
 }
 
+.lib-summary {
+  margin-top: 32px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+.lib-summary-title {
+  font-family: "Spectral", serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 6px 0 16px;
+}
+.lib-summary-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  margin-bottom: 20px;
+  max-width: 640px;
+}
+.lib-summary-pending {
+  color: var(--muted);
+  font-style: italic;
+}
+
 @media (max-width: 880px) {
   main {
     padding: 24px;
   }
   .lib-table {
     min-width: 640px;
+  }
+  .lib-summary {
+    padding: 20px;
   }
 }
 
@@ -139,4 +168,61 @@ h1 {
   .btn-ghost {
     width: 100%;
   }
+  .lib-summary-title {
+    font-size: 18px;
+  }
+  .lib-summary-text {
+    max-width: none;
+  }
+}
+
+.lib-status {
+  color: var(--ink-dim);
+  font-size: 14px;
+  padding: 60px 0;
+  text-align: center;
+}
+.lib-error {
+  color: var(--coral);
+}
+.lib-delete-cell {
+  width: 40px;
+  text-align: right;
+}
+.lib-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+.lib-delete-btn:hover {
+  color: var(--coral);
+  background: rgba(232, 120, 92, 0.12);
+}
+.lib-confirm-row {
+  display: inline-flex;
+  gap: 6px;
+}
+.lib-confirm-btn {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--rule);
+  background: var(--surface-raised);
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+.lib-confirm-yes {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+.lib-confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

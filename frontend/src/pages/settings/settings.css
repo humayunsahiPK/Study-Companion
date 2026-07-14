@@ -22,11 +22,75 @@ main {
 }
 .settings-panel {
   max-width: 480px;
+  margin-bottom: 20px;
 }
 .settings-copy {
   font-size: 14px;
   color: var(--ink-dim);
   line-height: 1.6;
+}
+.settings-error {
+  color: var(--coral);
+}
+.settings-user-name {
+  font-family: "Spectral", serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.settings-user-email {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.settings-signout-btn {
+  width: auto;
+}
+.settings-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.settings-toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.settings-toggle {
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--rule);
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  padding: 0;
+}
+.settings-toggle.on {
+  background: var(--highlighter);
+}
+.settings-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.settings-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #eceef3;
+  transition: transform 0.15s ease;
+}
+.settings-toggle.on .settings-toggle-knob {
+  transform: translateX(18px);
+  background: #1a1608;
 }
 
 @media (max-width: 880px) {

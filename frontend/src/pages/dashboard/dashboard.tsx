@@ -1,22 +1,97 @@
 import "./dashboard.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../../api/client";
+
+type DashboardSummary = {
+  due_number: number;
+  lecture_count: number;
+  most_overdue_title: string;
+  overdue_days: number;
+};
+
+type StreakDay = {
+  day: string;
+  state: "done" | "due" | "today" | "today due" | "none";
+};
+
+type StreakResponse = {
+  days: StreakDay[];
+};
+
+type RecentLecture = {
+  id: string;
+  title: string;
+  tag: string;
+  date: string;
+  status: "done" | "processing";
+  due: string;
+  dueState: "has-due" | "none";
+};
 
 function Dashboard() {
+  const navigate = useNavigate();
+
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [streak, setStreak] = useState<StreakDay[]>([]);
+  const [recentLectures, setRecentLectures] = useState<RecentLecture[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const [noteText, setNoteText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isSubmittingNotes, setIsSubmittingNotes] = useState(false);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const [summaryData, streakData, lecturesData] = await Promise.all([
+          apiRequest<DashboardSummary>("/dashboard/summary"),
+          apiRequest<StreakResponse>("/dashboard/streak"),
+          apiRequest<RecentLecture[]>("/lectures"),
+        ]);
+        setSummary(summaryData);
+        setStreak(streakData.days);
+        setRecentLectures(lecturesData.slice(0, 3));
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load dashboard.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadDashboard();
+  }, []);
 
   function handleUploadClick() {
     fileInputRef.current?.click();
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      console.log("Selected file:", file.name);
+    if (!file) return;
+
+    setSelectedFile(file);
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      await apiRequest("/lectures/upload", {
+        method: "POST",
+        body: formData,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setIsUploading(false);
+      setSelectedFile(null);
     }
   }
 
@@ -29,112 +104,133 @@ function Dashboard() {
     }
   }
 
-  function handleNoteSubmit() {
-    console.log("Submitted notes:", noteText);
+  async function handleNoteSubmit() {
+    if (!noteText.trim()) return;
+    setIsSubmittingNotes(true);
+
+    try {
+      await apiRequest("/lectures/from-notes", {
+        method: "POST",
+        body: { notes: noteText },
+      });
+      setNoteText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit notes.");
+    } finally {
+      setIsSubmittingNotes(false);
+    }
   }
 
-  const navigate = useNavigate();
+  function dotClassFor(state: StreakDay["state"]) {
+    if (state === "none") return "dot";
+    return `dot ${state}`;
+  }
+
+  if (isLoading) {
+    return (
+      <main className="dashboard">
+        <p className="dashboard-status">Loading your dashboard...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="dashboard">
+        <p className="dashboard-status dashboard-error">{error}</p>
+      </main>
+    );
+  }
+
   return (
     <main className="dashboard">
       <div className="pagehead">
-        <div className="Date">Friday, July 3</div>
+        <div className="Date">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })}
+        </div>
         <div className="Container">
           <div className="Greetings">Good Evening</div>
-          <button className="ReviewBtn" onClick={() => navigate("/review")}>
-            Start review session
-          </button>
+          <div className="pagehead-actions">
+            <button
+              className="btn btn-ghost"
+              onClick={() =>
+                navigate("/library", {
+                  state: { lectureId: recentLectures[0]?.id },
+                })
+              }
+            >
+              View summary
+            </button>
+            <button className="ReviewBtn" onClick={() => navigate("/review")}>
+              Start review session
+            </button>
+          </div>
         </div>
       </div>
       <div className="dashgrid">
         <div className="Panel">
           <div className="PanelTitle">Due Today</div>
           <div className="due-figure">
-            <div className="due-number">12</div>
+            <div className="due-number">{summary?.due_number ?? 0}</div>
             <div className="due-copy">
-              cards waiting across <b>3 lectures </b> — Thermodynamics is
-              overdue by two days.
+              cards waiting across{" "}
+              <b>{summary?.lecture_count ?? 0} lectures </b>
+              {summary && summary.overdue_days > 0
+                ? ` — ${summary.most_overdue_title} is overdue by ${summary.overdue_days} day${summary.overdue_days === 1 ? "" : "s"}.`
+                : "."}
             </div>
           </div>
         </div>
         <div className="Panel">
           <div className="PanelTitle">This Week</div>
           <div className="dotgrid" id="dotgrid">
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot due"></div>
-            <div className="dot today due"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot due"></div>
-            <div className="dot"></div>
-            <div className="dot done"></div>
-            <div className="dot"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot done"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
+            {streak.map((day, i) => (
+              <div key={i} className={dotClassFor(day.state)}></div>
+            ))}
           </div>
           <div className="streak-caption">
-            <span>Mon</span>
-            <span>Tue</span>
-            <span>Wed</span>
-            <span>Thu</span>
-            <span>Fri</span>
-            <span>Sat</span>
-            <span>Sun</span>
+            {streak.map((day) => (
+              <span key={day.day}>{day.day}</span>
+            ))}
           </div>
         </div>
       </div>
       <div className="section-label">Recent lectures</div>
       <div className="card-row">
-        <div className="idx-card">
-          <div>
-            <div className="idx-tag">CHEM 201</div>
-            <div className="idx-title">
-              Thermodynamics — Entropy &amp; the 2nd Law
+        {recentLectures.length === 0 ? (
+          <p className="dashboard-status">
+            No lectures yet — upload audio or paste notes below to get started.
+          </p>
+        ) : (
+          recentLectures.map((lecture) => (
+            <div
+              className="idx-card"
+              key={lecture.id}
+              onClick={() =>
+                navigate("/library", { state: { lectureId: lecture.id } })
+              }
+            >
+              <div>
+                <div className="idx-tag">{lecture.tag}</div>
+                <div className="idx-title">{lecture.title}</div>
+              </div>
+              <div className="idx-meta">
+                <span>{lecture.date}</span>
+                {lecture.status === "done" ? (
+                  <span className="status-pill status-done">{lecture.due}</span>
+                ) : (
+                  <span className="status-pill status-processing">
+                    transcribing…
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="idx-meta">
-            <span>Jul 1</span>
-            <span className="status-pill status-done">6 cards due</span>
-          </div>
-        </div>
-        <div className="idx-card">
-          <div>
-            <div className="idx-tag">POL SCI 110</div>
-            <div className="idx-title">
-              History of Political Thought — Week 4
-            </div>
-          </div>
-          <div className="idx-meta">
-            <span>Jun 29</span>
-            <span className="status-pill status-done">4 cards due</span>
-          </div>
-        </div>
-        <div className="idx-card">
-          <div>
-            <div className="idx-tag">CS 350</div>
-            <div className="idx-title">Distributed Systems — Consensus</div>
-          </div>
-          <div className="idx-meta">
-            <span>Jun 27</span>
-            <span className="status-pill status-processing">transcribing…</span>
-          </div>
-        </div>
+          ))
+        )}
       </div>
       <div className="drop-cta">
         <div className="drop-cta-copy">
@@ -144,8 +240,12 @@ function Dashboard() {
             extension.
           </p>
         </div>
-        <button className="btn btn-ghost" onClick={handleUploadClick}>
-          Upload audio
+        <button
+          className="btn btn-ghost"
+          onClick={handleUploadClick}
+          disabled={isUploading}
+        >
+          {isUploading ? "Uploading..." : "Upload audio"}
         </button>
         <input
           type="file"
@@ -169,8 +269,9 @@ function Dashboard() {
         <button
           className="btn btn-ghost note-submit-btn"
           onClick={handleNoteSubmit}
+          disabled={isSubmittingNotes || !noteText.trim()}
         >
-          Generate cards from notes
+          {isSubmittingNotes ? "Generating..." : "Generate cards from notes"}
         </button>
       </div>
     </main>
