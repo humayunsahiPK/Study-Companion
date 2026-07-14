@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Study Companion",
+  "version": "1.0.0",
+  "description": "Record live lecture audio directly from your browser tab and send it to Study Companion for transcription and flashcard generation.",
+  "permissions": [
+    "tabCapture",
+    "storage",
+    "offscreen",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

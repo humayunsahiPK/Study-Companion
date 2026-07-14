@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="header">
+        <div class="eyebrow">Study Companion</div>
+      </div>
+
+      <div id="login-view" class="view">
+        <h1>Sign in.</h1>
+        <input id="email-input" type="email" placeholder="you@example.com" />
+        <input id="password-input" type="password" placeholder="Password" />
+        <button id="login-btn" class="btn-primary">Sign in</button>
+        <p id="login-error" class="error"></p>
+      </div>
+
+      <div id="record-view" class="view hidden">
+        <h1 id="status-text">Ready to record.</h1>
+        <p id="record-subtext">Click record to capture this tab's audio.</p>
+        <button id="record-btn" class="btn-record">Record</button>
+        <p id="record-status" class="status-message"></p>
+        <button id="signout-btn" class="btn-ghost">Sign out</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
